@@ -31,3 +31,8 @@ TEMP_DEMAIN=$(grep '"avgtempC"' "$DATA" | sed 's/[^0-9-]*//g' | sed -n '2p')
 #formatage en gardant que les chiffre encore une fois
 #le dernier pipe sert à ne garder que la deuxième valeur qui correspond au lebdemain
 
+DATE=$(date +"%Y-%m-%d -%H:%M")
+#je stock la date formatée dans la variable  
+
+echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "${DIR}meteo.txt"
+#pour écrire dans le fichier meteo.txt sans supprimer les dernières valeurs
