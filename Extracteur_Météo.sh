@@ -12,10 +12,9 @@ fi
 VILLE=$1
 # la ville a pour valeur celle faite à l'appel ./Extracteur_Météo.sh <Nom_Ville>
 
-DIR="/Users/mathieu/Desktop/MATHIEU/UT3/1er_SEMESTRE/CONFIGUATION_POST_DE_TRAVAIL/Projet/git_projets/projet_Poste3_gr4/" 
-# ce chemin n'est valable que pour moi il faudra le changer pour vous
-# c'est le chemin vers l'endroit ou se trouve mon répertoire de travail
-DATA="${DIR}info_meteo.txt"
+DATA="info_meteo.txt"
+>"$DATA"
+#Nom du fichier temporaire servant a stocker les données brute du site,  si il existe déja, on le vide ou alors on le crée.
 
 curl -s "wttr.in/${VILLE}?format=j2" -o "$DATA"
 #je vais chercher en ligne les données de la ville, je les mets en format json compact pour un meilleur traitement 
@@ -34,5 +33,8 @@ TEMP_DEMAIN=$(grep '"avgtempC"' "$DATA" | sed 's/[^0-9-]*//g' | sed -n '2p')
 DATE=$(date +"%Y-%m-%d -%H:%M")
 #je stock la date formatée dans la variable  
 
-echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "${DIR}meteo.txt"
+echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "meteo.txt"
 #pour écrire dans le fichier meteo.txt sans supprimer les dernières valeurs
+
+rm "$DATA"
+#On supprime le fichier temporaire car on en a plus besoin.
