@@ -33,6 +33,11 @@ TEMP_DEMAIN=$(grep '"avgtempC"' "$DATA" | sed 's/[^0-9-]*//g' | sed -n '2p')
 DATE=$(date +"%Y-%m-%d -%H:%M")
 #je stock la date formatée dans la variable  
 
+if [ ! -f "meteo.txt" ]; then
+    touch "meteo.txt"
+fi
+#Si le fichier meteo.txt n'existe pas, alors on le crée (peremet de faire marcher le script sur n'importe quelle machine an partir du simple fichier Extracteur_Météo.sh)
+
 echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "meteo.txt"
 #pour écrire dans le fichier meteo.txt sans supprimer les dernières valeurs
 
