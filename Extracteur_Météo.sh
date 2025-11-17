@@ -16,19 +16,30 @@ DATA="info_meteo.txt"
 >"$DATA"
 #Nom du fichier temporaire servant a stocker les données brute du site,  si il existe déja, on le vide ou alors on le crée.
 
-curl -s "wttr.in/${VILLE}?format=j2" -o "$DATA"
-#je vais chercher en ligne les données de la ville, je les mets en format json compact pour un meilleur traitement 
+curl -s "wttr.in/${VILLE}" -o "$DATA"
+#je vais chercher en ligne les données de la ville 
 #puis je les assignent à $DATA
 
+sed -i 's/\x1B\[[0-9;]*[JKmsu]//g' "$DATA"
+# Je formate le fichier info_meteo.txt pour enlever les codes ANSI (ceux qui servent aux couleurs donc innutiles) pour plus de lisibilité
+# -i : modifie le fichier directement
+# s/.../.../g : remplace tout ce qui correspond par rien
+# \x1B\[[0-9;]*[JKmsu] : expression qui correspond à tous les codes ANSI
 
-TEMP=$(grep -m1 '"temp_C"' "$DATA" | sed 's/[^0-9-]*//g')
-#je récupère la température actuelle en recherchant la première occurence de "temp_C"
-#puis le formatage en gardant les chiffre et le "-"
 
-TEMP_DEMAIN=$(grep '"avgtempC"' "$DATA" | sed 's/[^0-9-]*//g' | sed -n '2p')
-#je récupère la temp moyenne du lendemain en récupérant toutes les lignes contenant "avgtempC"
-#formatage en gardant que les chiffre encore une fois
-#le dernier pipe sert à ne garder que la deuxième valeur qui correspond au lebdemain
+TEMP=$(grep -o '[+-]\?[0-9]\+' "$DATA" | head -1 | sed 's/^+//')
+#Je récupère la température actuelle en cherchant toutes les occurrences de nombres
+#puis je prends la première occurence.
+#puis, si il y a un plus je le remplace par rien (permet de garder que le -)
+
+DEMAIN=$(date -d tomorrow "+%a %d %b")
+#je récupère la date de demain au même format que sur wttr.in pour pouvoir ensuite la rechercher avec la commande grep.
+
+TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" | grep -o '[+-]\?[0-9]\+' | head -2 | tail -1 | sed 's/^+//')
+#cherche les 5 lignes écrites après la date de demain (cela devrait contenir l'information cherchée)
+#Je récupère la température de demain matin en cherchant tous les nombres
+#puis je prends la deuxième occurence. (la 1ere étant la date de demain...)
+#puis, si il y a un plus je le remplace par rien (permet de garder que le -)
 
 DATE=$(date +"%Y-%m-%d -%H:%M")
 #je stock la date formatée dans la variable  
