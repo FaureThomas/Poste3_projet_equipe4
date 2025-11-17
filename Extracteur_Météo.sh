@@ -7,10 +7,13 @@ if [ $# -eq 0 ]; then
     echo "Usage: $0 <ville>"
     exit 1
 fi 
-#je m'assure du bon appel de mon scritp "./Extracteur_meteo.sh <ville>"
+#je m'assure du bon appel de mon scritp "./Extracteur_Météo.sh <ville>"
 
+VILLE="Toulouse"
+#on a choisi de mettre Toulouse comme ville par défaut
+else
 VILLE=$1
-# la ville a pour valeur celle faite à l'appel ./Extracteur_Météo.sh <Nom_Ville>
+# la ville a pour valeur celle faite à l'appel ./Extracteur_Météo.sh <ville>
 
 DATA="info_meteo.txt"
 >"$DATA"
