@@ -25,8 +25,10 @@ Résumé du script :
 2: Crée un fichier temporaire info_meteo.txt si il n'existe pas, ou le vide sinon.
 3: Récupère les données brutes du site wttr.in et les écrit dans le fichier info_meteo.txt
 4: Création d'une variable stockant la température actuelle via la commande grep (part chercher l'info dans info_meteo.txt)
-5: Création d'une variable stockant les prévisions pour demain via la commande grep (part chercher l'info dans info_meteo.txt)
-6: Création d'une variable DATE pour stocker la date du jour.
-7: Si il n'existe pas déjà, création d'un fichier meteo.txt
-8: Via la commande echo, et en mettant toutes les variables dans le bon ordre, on peut écrire la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dans meteo.txt
-9: Supprime le fichier temporaire info_meteo.txt car nous n'en avons plus besoin.
+5: creation d'une variable DEMAIN pour stocker la date de demain (afin de pouvoir chercher la date de demain, voir étape 6)
+5: Création d'une variable stockant les prévisions pour demain via la commande grep (part chercher l'info dans info_meteo.txt en cherchant les lignes à partir de DEMAIN)
+7: Création d'une variable DATE pour stocker la date du jour.
+8: Si il n'existe pas déjà, création d'un fichier meteo.txt
+9: Via la commande echo, et en mettant toutes les variables dans le bon ordre, on peut écrire la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dans meteo.txt
+10: Supprime le fichier temporaire info_meteo.txt car nous n'en avons plus besoin.
+
