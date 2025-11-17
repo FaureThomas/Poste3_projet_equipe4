@@ -32,3 +32,8 @@ Résumé du script :
 9: Via la commande echo, et en mettant toutes les variables dans le bon ordre, on peut écrire la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dans meteo.txt
 10: Supprime le fichier temporaire info_meteo.txt car nous n'en avons plus besoin.
 
+Version 2:
+
+La première consigne correspond à l’utilisation d’une ville par défaut afin que le script fonctionne dans tous les cas. Pour ce faire, il faut ajouter une condition qui définit une ville par défaut, ici Toulouse et qui conservera cette valeur tant qu’aucune autre ville n’est fournie en paramètre.
+
+CRON:
