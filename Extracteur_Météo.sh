@@ -4,13 +4,19 @@
 #d'aujourdh'ui et de demain. 
 
 if [ $# -eq 0 ]; then
-    VILLE = "Toulouse"
+    VILLE="Toulouse"
 #On met la ville de Toulouse par defaut
 	else
-	VILLE = $1
+	VILLE=$1
 #sinon il prend la première ville passé en argument
-fi 
+fi
+ 
+DIR_SCRIPT="$(dirname "$0")"
+METEO="${DIR_SCRIPT}/meteo.txt"
 
+# Si le script est lancé via cron, $0 contient le chemin complet + le nom du script.
+#J'utilise dirname pour enlève le nom du fichier et garde uniquement le chemin du script.
+# DIR_SCRIPT contient ainsi le chemin réel, évitant que meteo.txt soit créé dans le répertoire de base, comme cron a tendance à le faire.
 
 DATA="info_meteo.txt"
 >"$DATA"
@@ -42,15 +48,19 @@ TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" | grep -o '[+-]\?[0-9]\+' | head -2 | t
 #puis, si il y a un plus je le remplace par rien (permet de garder que le -)
 
 DATE=$(date +"%Y-%m-%d -%H:%M")
-#je stock la date formatée dans la variable  
+#je stock la date formatée dans la variable 
 
-if [ ! -f "meteo.txt" ]; then
-    touch "meteo.txt"
+if [ ! -f "$METEO" ]; then
+    touch "$METEO"
 fi
 #Si le fichier meteo.txt n'existe pas, alors on le crée (peremet de faire marcher le script sur n'importe quelle machine an partir du simple fichier Extracteur_Météo.sh)
 
-echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "meteo.txt"
+echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "$METEO"
 #pour écrire dans le fichier meteo.txt sans supprimer les dernières valeurs
 
 rm "$DATA"
 #On supprime le fichier temporaire car on en a plus besoin.
+
+# Exemple de ligne à ajouter dans crontab -e pour exécuter le script toutes les 4 minutes
+# */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh alors
+# Ici, $0 contiendra /chemin/vers/le/dossier/Extracteur_Météo.sh et dirname($0) permettra de récupérer /chemin/vers/le/dossier, correspondant à DIR_SCRIPT
