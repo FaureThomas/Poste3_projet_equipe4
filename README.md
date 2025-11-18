@@ -82,7 +82,7 @@ Cette commande ouvre le fichier où l’on ajoute les lignes de planification.
 */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh 
 #cet script s’exécutera toutes les 4 minutes
 ```
-Cette ligne doit être ajoutée dans le fichier ouvert par ``crontab -e.``\
+Cette ligne doit être ajoutée dans le fichier ouvert par ``crontab -e``.\
 Enregistrer le fichier, ce qui active automatiquement la tâche cron.
 
 ### Gestion des chemins dans le script
@@ -95,13 +95,12 @@ DIR_SCRIPT="$(dirname "$0")"
 METEO="${DIR_SCRIPT}/meteo.txt"
 
 ```
-``$0`` contient **le chemin complet + nom du script**, par ex. ``/home/user/scripts/Extracteur_Météo.sh.``
 
 ``$0`` contient **le chemin complet + nom du script**, par ex. ``/home/user/scripts/Extracteur_Météo.sh``.
 Il est fourni automatiquement par le shell ou cron au moment de l’exécution et correspond à la façon dont le script est appelé.
 
 Depuis le terminal : ``./Extracteur_Météo.sh``  ``$0`` = ``./Extracteur_Météo.sh``\
-Depuis cron : ``/home/user/scripts/Extracteur_Météo.sh``  ``$0`` = ``/home/user/scripts/Extracteur_Météo.sh``
+Depuis cron : ``/home/user/scripts/Extracteur_Météo.sh``  ``$0`` = ``/home/user/scripts/Extracteur_Météo.sh``.
 
 ``dirname "$0"`` garde uniquement le dossier : ``/home/user/scripts``, qui est stocké dans la variable ``DIR_SCRIPT``.
 
