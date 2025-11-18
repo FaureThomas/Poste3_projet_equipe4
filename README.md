@@ -36,4 +36,73 @@ Version 2:
 
 La première consigne correspond à l’utilisation d’une ville par défaut afin que le script fonctionne dans tous les cas. Pour ce faire, il faut ajouter une condition qui définit une ville par défaut, ici Toulouse et qui conservera cette valeur tant qu’aucune autre ville n’est fournie en paramètre.
 
-CRON:
+## CRON
+
+Pour faire fonctionner **cron**, il faut commencer par exécuter la commande 
+``
+crontab -e
+``
+afin d’éditer la table des tâches planifiées.\
+Cron sert à automatiser le lancement de scripts à intervalles réguliers (par exemple : chaque heure).
+Une ligne cron est composée de 5 champs (parfois 6 ou 7 selon la configuration) qui représentent chacun une valeur de planification.
+
+Cron utilise 5 astérisques, chacun correspondant à une unité de temps, suivis du chemin vers le fichier à exécuter. Par exemple :
+
+```bash
+0 8 * * * chemin : le script se lancera tous les jours à 8h00
+*/4 * * * * chemin : le script s’exécutera toutes les 4 minutes
+```
+Pour obtenir le bon chemin, on peut utiliser la commande ``pwd``, récupérer le chemin affiché, puis l’intégrer dans la ligne cron.
+(Attention : il faut d’abord se placer dans le dossier où se trouve le script avant d’utiliser pwd.)
+
+Il faut noter que **cron ne fonctionne pas partout** : il est disponible uniquement sur les systèmes **Linux/Unix.**
+Il existe donc des alternatives pour les autres systèmes :
+
+**Windows** : Task Scheduler (Planificateur de tâches)\
+**macOS** : launchd (launchctl)
+
+### Étapes pour configurer correctement cron ###
+**1. Se rendre dans le dossier où se trouve le script.**\
+ Il est important d’être dans le bon dossier avant toute manipulation.
+
+**2. Si vous ne vous souvenez plus du chemin exact, utilisez :**
+``pwd``
+cette commande affiche le chemin complet du dossier actuel. Par exemple, cela peut afficher :``/home/user/scripts``\
+Gardez ce chemin, car vous l’utiliserez ensuite dans la ligne cron.
+
+**3. Ouvrir la configuration cron avec :**
+```bash 
+crontab -e
+```
+Cette commande ouvre le fichier où l’on ajoute les lignes de planification.
+
+**4. Ajouter la ligne cron, par exemple :**
+
+```bash
+*/4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh 
+#cet script s’exécutera toutes les 4 minutes
+```
+Cette ligne doit être ajoutée dans le fichier ouvert par ``crontab -e.``\
+Enregistrer le fichier, ce qui active automatiquement la tâche cron.
+
+### Gestion des chemins dans le script
+
+Quand **cron** lance un script, il le fait souvent depuis le répertoire home, pas celui du script.
+Pour éviter que ``meteo.txt`` soit créé au mauvais endroit, on a modifié le script ``Extracteur_Météo.sh`` avec :
+```bash
+
+DIR_SCRIPT="$(dirname "$0")"
+METEO="${DIR_SCRIPT}/meteo.txt"
+
+```
+``$0`` contient **le chemin complet + nom du script**, par ex. ``/home/user/scripts/Extracteur_Météo.sh.``
+
+``$0`` contient **le chemin complet + nom du script**, par ex. ``/home/user/scripts/Extracteur_Météo.sh``.
+Il est fourni automatiquement par le shell ou cron au moment de l’exécution et correspond à la façon dont le script est appelé.
+
+Depuis le terminal : ``./Extracteur_Météo.sh``  ``$0`` = ``./Extracteur_Météo.sh``\
+Depuis cron : ``/home/user/scripts/Extracteur_Météo.sh``  ``$0`` = ``/home/user/scripts/Extracteur_Météo.sh``
+
+``dirname "$0"`` garde uniquement le dossier : ``/home/user/scripts``, qui est stocké dans la variable ``DIR_SCRIPT``.
+
+Ainsi, les fichiers sont toujours créés dans le dossier du script, que ce soit depuis cron ou depuis le terminal.
