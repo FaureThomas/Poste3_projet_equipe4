@@ -105,3 +105,31 @@ Depuis cron : ``/home/user/scripts/Extracteur_Météo.sh``  ``$0`` = ``/home/use
 ``dirname "$0"`` garde uniquement le dossier : ``/home/user/scripts``, qui est stocké dans la variable ``DIR_SCRIPT``.
 
 Ainsi, les fichiers sont toujours créés dans le dossier du script, que ce soit depuis cron ou depuis le terminal.
+
+Version 3 :
+
+Le script de la version 3 se comporte comme la version 2 (qui est lui même une amélioration de la version 1). Donc les objectif de la version 3 sont les mêmes.
+La seule différence de cette version par rapport aux autres est la gestion d'historique :
+
+Désormais, au lieu d'écrire la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dans meteo.txt (ou de créer ce fichier avant d'y écrire la ligne si il n'existe pas), la température actuelle ainsi que les prévisions pour demain matin sont écrites dans un fichier météoYYYYMMDD.txt.
+
+Pour ce faire, on a stocké la date du jour (au format YYYYMMDD) dans une variable (DATE_METEOTXT), puis au lieu de déclarer que le fichier de sortie est "meteo.txt", on déclare que le fichier de sortie est : "meteo"$DATE_METEOTXT".txt"
+
+Par exemple, dans la version 2 on a :
+
+DIR_SCRIPT="$(dirname "$0")"
+METEO="${DIR_SCRIPT}/meteo.txt"
+(ce script va créer meteo.txt si il n'existe pas (grace à la boucle "if" située en fin de script), puis écrire la météo sur une nouvelle ligne à chaque fois que le script sera lancé, y compris si il est automatisé avec cron).
+
+Dans la version 3 on a :
+
+DATE_METEOTXT=$(date +"%Y%m%d")
+DIR_SCRIPT="$(dirname "$0")"
+METEO="${DIR_SCRIPT}/meteo"$DATE_METEOTXT".txt"
+(idem que dans la version 2, sauf que la météo sera écrite dans un fichier nommé meteoYYYYMMDD.txt)
+
+Voici donc les cas possibles :
+
+Le script est lancé pour la première fois aujourd'hui ou que meteoYYYYMMDD.txt n'existe pas : création du fichier (exemple pour aujourd'hui : meteo20251118.txt), et écrit la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dedans.
+
+Le script a déja été lancé aujourd'hui ou meteoYYYYMMDD.txt existe déjà : écrit la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" à la suite du fichier meteoYYYYMMDD.txt .
