@@ -4,7 +4,7 @@
 #d'aujourdh'ui et de demain. 
 
 if [ $# -eq 0 ]; then
-    VILLE = "Toulouse"
+    VILLE="Toulouse"
 #On met la ville de Toulouse par defaut
 	else
 	VILLE = $1
