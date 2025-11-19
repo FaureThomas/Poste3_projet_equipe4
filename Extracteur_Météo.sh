@@ -16,6 +16,7 @@ DATE_METEOTXT=$(date +"%Y%m%d")
 
 DIR_SCRIPT="$(dirname "$0")"
 METEO="${DIR_SCRIPT}/meteo"$DATE_METEOTXT".txt"
+ERREUR_LOG="${DIR_SCRIPT}/meteo_error.log"
 
 # Si le script est lancé via cron, $0 contient le chemin complet + le nom du script.
 #J'utilise dirname pour enlève le nom du fichier et garde uniquement le chemin du script.
@@ -30,6 +31,11 @@ DATA="info_meteo.txt"
 curl -s "wttr.in/${VILLE}" -o "$DATA"
 #je vais chercher en ligne les données de la ville 
 #puis je les assignent à $DATA
+
+if [ $? -ne 0 ] || [ ! -s "$DATA" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') -  Erreur : problème de connexion à wttr.in" >> "$ERREUR_LOG"
+    exit 1
+fi
 
 sed -i 's/\x1B\[[0-9;]*[JKmsu]//g' "$DATA"
 # Je formate le fichier info_meteo.txt pour enlever les codes ANSI (ceux qui servent aux couleurs donc innutiles) pour plus de lisibilité
