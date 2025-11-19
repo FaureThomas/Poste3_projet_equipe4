@@ -1,0 +1,5 @@
+2025-11-19 -22:01 -Toulouse : °C - °C - Vent :  - Humidite :  - Visibilite : 
+2025-11-19 -22:06 -Toulouse : 8°C - 3°C - Vent :  - Humidite :  - Visibilite : 
+2025-11-19 -22:15 -Toulouse : 8°C - 3°C - Vent :  - Humidite :  - Visibilite : 
+2025-11-19 -22:26 -Toulouse : 8°C - °C - Vent :  - Humidite :  - Visibilite : 
+2025-11-19 -22:51 -Toulouse : 8°C°C - Vent : 17km/h - Humidite : 87% - Visibilite : N/A
