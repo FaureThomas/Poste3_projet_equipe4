@@ -133,3 +133,8 @@ Voici donc les cas possibles :
 Le script est lancé pour la première fois aujourd'hui ou que meteoYYYYMMDD.txt n'existe pas : création du fichier (exemple pour aujourd'hui : meteo20251118.txt), et écrit la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" dedans.
 
 Le script a déja été lancé aujourd'hui ou meteoYYYYMMDD.txt existe déjà : écrit la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" à la suite du fichier meteoYYYYMMDD.txt .
+
+
+Variante 3 :
+
+Cette partie du script s'occupe de la gestion des erreurs en contrôlant si le recueil des données depuis wttr.in a échoué. Pour cela, elle se sert de ``$?`` pour repérer un problème de la commande précédente ainsi que le fichier indiqué par ``$DATA``, vérifié avec ``! -s "$DATA "`` afin de déterminer si le fichier est vide ou non présent. Si un problème survient, le script indique une alerte d'erreur avec des indicateurs horaires dans ``meteo_error.log``, facilitant donc l'identification précise du moment et de la raison de l'échec.
