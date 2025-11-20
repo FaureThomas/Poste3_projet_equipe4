@@ -11,6 +11,12 @@ if [ $# -eq 0 ]; then
 #sinon il prend la première ville passé en argument
 fi
 
+#Vérification de l'argument (la ville)
+FORMAT_JSON = false
+if [ "$2" == "--json" ]; then
+        FORMAT_JSON = true
+fi
+
 DATE_METEOTXT=$(date +"%Y%m%d")
 #On crée une variable pour stocker la date du jour au format demandé dans la version 3 (YYYYMMDD)
 
@@ -69,3 +75,23 @@ rm "$DATA"
 # Exemple de ligne à ajouter dans crontab -e pour exécuter le script toutes les 4 minutes
 # */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh alors
 # Ici, $0 contiendra /chemin/vers/le/dossier/Extracteur_Météo.sh et dirname($0) permettra de récupérer /chemin/vers/le/dossier, correspondant à DIR_SCRIPT
+
+if [ "$FORMAT_JSON" = true ]; then
+	NOUVELLE_ENTREE="{
+		\"date\": \"$DATE\",
+		\"heure\": \"$HEURE\",
+		\"ville\": \"$VILLE\",
+		\"temperature_actuelle\": \"${TEMP_ACTUELLE}°C\",
+		\"temperature__prevision\": \"${TEMP_PREVISION}°C\",
+		\"vitesse_vent\": \"${VITESSE_VENT} km/h\",
+		\"humidite\": \"${TAUX_HUMIDITE}%\",
+		\"visibilite\": \"${VISIBILITE} km\"
+	}"
+	rm "meteo_$VILLE.txt"
+	if [ -f "meteo.json" ]; then
+		sed -i '$ s/],$/],/' meteo.json
+		echo ",$NOUVELLE_ENTREE]" >> meteo.json
+	else
+		echo "[$NOUVELLE_ENTREE]" > meteo.json
+	fi
+fi
