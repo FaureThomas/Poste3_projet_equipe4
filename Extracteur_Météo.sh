@@ -7,10 +7,21 @@ if [ $# -eq 0 ]; then
     VILLE="Toulouse"
 #On met la ville de Toulouse par defaut
 	else
-	VILLE = $1
+	VILLE=$1
 #sinon il prend la première ville passé en argument
-fi 
+fi
 
+DATE_METEOTXT=$(date +"%Y%m%d")
+#On crée une variable pour stocker la date du jour au format demandé dans la version 3 (YYYYMMDD)
+
+DIR_SCRIPT="$(dirname "$0")"
+METEO="${DIR_SCRIPT}/meteo"$DATE_METEOTXT".txt"
+
+# Si le script est lancé via cron, $0 contient le chemin complet + le nom du script.
+#J'utilise dirname pour enlève le nom du fichier et garde uniquement le chemin du script.
+#Adaptation du nom du fichier meteo.txt en utilisant la variable DATE_METEOTXT pour se diriger vers le fichier correspondant au bon jour
+# DIR_SCRIPT contient ainsi le chemin réel, évitant que meteoYYYYMMDD.txt soit créé dans le répertoire de base, comme cron a tendance à le faire.
+#Modification du chemin emplyoyé pour se diriger vers meteoYYYYMMDD.txt au lieu de meteo.txt
 
 DATA="info_meteo.txt"
 >"$DATA"
@@ -42,19 +53,20 @@ TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" | grep -o '[+-]\?[0-9]\+' | head -2 | t
 #puis, si il y a un plus je le remplace par rien (permet de garder que le -)
 
 DATE=$(date +"%Y-%m-%d -%H:%M")
-#je stock la date formatée dans la variable  
+#je stock la date formatée dans la variable 
 
-if [ ! -f "meteo.txt" ]; then
-    touch "meteo.txt"
+if [ ! -f "$METEO" ]; then
+    touch "$METEO"
 fi
-#Si le fichier meteo.txt n'existe pas, alors on le crée (peremet de faire marcher le script sur n'importe quelle machine an partir du simple fichier Extracteur_Météo.sh)
+#Si le fichier meteoYYYYMMDD.txt n'existe pas, alors on le crée (peremet de faire marcher le script sur n'importe quelle machine an partir du simple fichier Extracteur_Météo.sh)
 
-echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "meteo.txt"
-#pour écrire dans le fichier meteo.txt sans supprimer les dernières valeurs
+echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "$METEO"
+#pour écrire dans le fichier meteoYYYYMMDD.txt sans supprimer les dernières valeurs
 
 rm "$DATA"
 #On supprime le fichier temporaire car on en a plus besoin.
 
+<<<<<<< HEAD
 
 #______________________________________________________ Variante 1:_______________________________________________________________
 
@@ -116,3 +128,8 @@ rm "$DATA"
 
 #______________________________________________________Variante 3:________________________________________________________________________
 
+=======
+# Exemple de ligne à ajouter dans crontab -e pour exécuter le script toutes les 4 minutes
+# */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh alors
+# Ici, $0 contiendra /chemin/vers/le/dossier/Extracteur_Météo.sh et dirname($0) permettra de récupérer /chemin/vers/le/dossier, correspondant à DIR_SCRIPT
+>>>>>>> 1ac2d53f5adf6792adc97a6216d67effd250ba2d
