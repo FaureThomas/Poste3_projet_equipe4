@@ -40,6 +40,11 @@ curl -s --max-time 10 "wttr.in/${VILLE}" -o "$DATA"
 #je vais chercher en ligne les données de la ville 
 #puis je les assignent à $DATA
 
+if [ $? -ne 0 ] || [ ! -s "$DATA" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') -  Erreur : problème de connexion à wttr.in" >> "$ERREUR_LOG"
+    exit 1
+fi
+
 sed -i 's/\x1B\[[0-9;]*[JKmsu]//g' "$DATA"
 # Je formate le fichier info_meteo.txt pour enlever les codes ANSI (ceux qui servent aux couleurs donc innutiles) pour plus de lisibilité
 # -i : modifie le fichier directement
