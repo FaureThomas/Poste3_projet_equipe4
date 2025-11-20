@@ -40,6 +40,8 @@ curl -s --max-time 10 "wttr.in/${VILLE}" -o "$DATA"
 #je vais chercher en ligne les données de la ville 
 #puis je les assignent à $DATA
 
+ERREUR_LOG="${DIR_SCRIPT}/erreur.log"
+
 if [ $? -ne 0 ] || [ ! -s "$DATA" ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') -  Erreur : problème de connexion à wttr.in" >> "$ERREUR_LOG"
     exit 1
@@ -64,7 +66,10 @@ TEMP=$(grep -m1 -o '[+-]\?[0-9]\+°C' "$DATA" | sed 's/^+//')
 DEMAIN=$(date -d tomorrow "+%a %d %b")
 #je récupère la date de demain au même format que sur wttr.in pour pouvoir ensuite la rechercher a$
 
-TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" | grep -o '[+-]\?[0-9]\+' | head -2 | tail -1 | sed 's/^+$
+TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" \
+ | grep -o '[+-]\?[0-9]\+' \
+ | head -2 | tail -1 \
+ | sed 's/^+//')
 #cherche les 5 lignes écrites après la date de demain (cela devrait contenir l'information cherché$
 #Je récupère la température de demain matin en cherchant tous les nombres   
 #puis je prends la deuxième occurence. (la 1ere étant la date de demain...) 
