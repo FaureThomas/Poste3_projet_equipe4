@@ -96,11 +96,8 @@ echo "${DATE} -${VILLE} : ${TEMP}°C - Vent : ${VENT_CHIFFRES} - Humidite : ${HU
 rm "$DATA"
 #On supprime le fichier temporaire car on en a plus besoin.
 
-<<<<<<< HEAD
 
-
-=======
 # Exemple de ligne à ajouter dans crontab -e pour exécuter le script toutes les 4 minutes
 # */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh alors
 # Ici, $0 contiendra /chemin/vers/le/dossier/Extracteur_Météo.sh et dirname($0) permettra de récupérer /chemin/vers/le/dossier, correspondant à DIR_SCRIPT
->>>>>>> 1ac2d53f5adf6792adc97a6216d67effd250ba2d
+
