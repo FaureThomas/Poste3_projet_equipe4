@@ -134,7 +134,20 @@ Le script est lancé pour la première fois aujourd'hui ou que meteoYYYYMMDD.txt
 
 Le script a déja été lancé aujourd'hui ou meteoYYYYMMDD.txt existe déjà : écrit la ligne "YYYY-MM-DD -HH:MM -Ville : [Température actuelle]°C - [Prévisions]°C" à la suite du fichier meteoYYYYMMDD.txt .
 
-
+Dans la variante 1 on a :
+  
+La Variante 1 est une version améliorée du script météo.
+Elle récupère les informations météorologiques d’une ville donnée via le service wttr.in, puis les enregistre dans un fichier journal au format facile à analyser, lisible par un humain, et compatible avec des outils de traitement automatique. Il se sert du script des versions 1, 2, et 3, en ajoutant les données de la vitesse du vent, de l’humidité, et de la visibilité.
+Le script prend les données sous un format spécifique : %t|%w|%h|%v
+Ce qui correspond à :
+•	%t → Température
+•	%w → Vent
+•	%h → Humidité
+•	%v → Visibilité
+Ce format est essentiel au bon fonctionnement du script car c’est ce que permet de retrouver les données à afficher.
+La ligne IFS='|' read TEMP VENT HUMIDITE VISIBILITE <<< "$(cat "$DATA")"
+Permet de lire le fichier, de découper le texte à chaque |, et stock chaque morceau de données dans une variable (TEMPS, VENT, HUMIDITE, VISIBILITE) pour ensuite pouvoir les afficher grâce au echo ( echo "${DATE} -${VILLE} : ${TEMP} - ${TEMP_DEMAIN}°C - Vent : ${VENT} - Humidite : ${HUMIDITE} - Visibilite : ${VISIBILITE}" ).
+                                                            
 Variante 3 :
-
 Cette partie du script s'occupe de la gestion des erreurs en contrôlant si le recueil des données depuis wttr.in a échoué. Pour cela, elle se sert de ``$?`` pour repérer un problème de la commande précédente ainsi que le fichier indiqué par ``$DATA``, vérifié avec ``! -s "$DATA "`` afin de déterminer si le fichier est vide ou non présent. Si un problème survient, le script indique une alerte d'erreur avec des indicateurs horaires dans ``meteo_error.log``, facilitant donc l'identification précise du moment et de la raison de l'échec.
+

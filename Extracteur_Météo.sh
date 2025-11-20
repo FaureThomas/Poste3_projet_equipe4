@@ -13,7 +13,6 @@ fi
 
 DATE_METEOTXT=$(date +"%Y%m%d")
 #On crée une variable pour stocker la date du jour au format demandé dans la version 3 (YYYYMMDD)
-
 DIR_SCRIPT="$(dirname "$0")"
 METEO="${DIR_SCRIPT}/meteo"$DATE_METEOTXT".txt"
 ERREUR_LOG="${DIR_SCRIPT}/meteo_error.log"
@@ -25,10 +24,13 @@ ERREUR_LOG="${DIR_SCRIPT}/meteo_error.log"
 #Modification du chemin emplyoyé pour se diriger vers meteoYYYYMMDD.txt au lieu de meteo.txt
 
 DATA="info_meteo.txt"
->"$DATA"
+#>"$DATA"
 #Nom du fichier temporaire servant a stocker les données brute du site,  si il existe déja, on le vide ou alors on le crée.
 
-curl -s "wttr.in/${VILLE}" -o "$DATA"
+#Le curl permet de prendre le format necessaire afin d'afficher vent, humidité et visibilité.
+#curl pour la variante 1:
+curl -s --max-time 10 "wttr.in/${VILLE}?format=%t|%w|%h|%v&no-terminal" -o "$DATA"
+#ancien curl des versions:curl -s "wttr.in/${VILLE}" -o "$DATA"
 #je vais chercher en ligne les données de la ville 
 #puis je les assignent à $DATA
 
@@ -43,8 +45,23 @@ sed -i 's/\x1B\[[0-9;]*[JKmsu]//g' "$DATA"
 # s/.../.../g : remplace tout ce qui correspond par rien
 # \x1B\[[0-9;]*[JKmsu] : expression qui correspond à tous les codes ANSI
 
+#Variante 1:
 
-TEMP=$(grep -o '[+-]\?[0-9]\+' "$DATA" | head -1 | sed 's/^+//')
+if [ ! -s "$DATA" ]; then
+    echo "Erreur : impossible de récupérer les données météo pour $VILLE."
+    exit 1
+fi
+
+RAW=$(cat "$DATA")
+# Supprimer séquences ANSI éventuelles
+RAW=$(echo "$RAW" | sed 's/\x1B\[[0-9;]*[JKmsu]//g')
+
+IFS='|' read -r TEMP VENT HUMIDITE VISIBILITE <<< "$RAW"
+
+
+TEMP="${TEMP#+}"
+#TEMP utiliser pour les version:
+#TEMP=$(grep -o '[+-]\?[0-9]\+' "$DATA" | head -1 | sed 's/^+//')
 #Je récupère la température actuelle en cherchant toutes les occurrences de nombres
 #puis je prends la première occurence.
 #puis, si il y a un plus je le remplace par rien (permet de garder que le -)
@@ -58,6 +75,18 @@ TEMP_DEMAIN=$(grep -A5 "$DEMAIN" "$DATA" | grep -o '[+-]\?[0-9]\+' | head -2 | t
 #puis je prends la deuxième occurence. (la 1ere étant la date de demain...)
 #puis, si il y a un plus je le remplace par rien (permet de garder que le -)
 
+
+# Nettoyer VENT (ne garder que les chiffres et km/h) afin d'éviter les problèmes d affichage
+VENT_CHIFFRES=$(echo "$VENT" | grep -o '[0-9]\+ *km/h')
+if [ -z "$VENT_CHIFFRES" ]; then
+    VENT_CHIFFRES="N/A"
+fi
+
+# Visibilité
+if [ -z "$VISIBILITE" ]; then
+    VISIBILITE="N/A"
+fi
+
 DATE=$(date +"%Y-%m-%d -%H:%M")
 #je stock la date formatée dans la variable 
 
@@ -66,12 +95,15 @@ if [ ! -f "$METEO" ]; then
 fi
 #Si le fichier meteoYYYYMMDD.txt n'existe pas, alors on le crée (peremet de faire marcher le script sur n'importe quelle machine an partir du simple fichier Extracteur_Météo.sh)
 
-echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "$METEO"
-#pour écrire dans le fichier meteoYYYYMMDD.txt sans supprimer les dernières valeurs
+echo "${DATE} -${VILLE} : ${TEMP}°C - Vent : ${VENT_CHIFFRES} - Humidite : ${HUMIDITE} - Visibilite : ${VISIBILITE}" >> "$METEO"
+#echo utilisé pour les versions:
+#echo "${DATE} -${VILLE} : ${TEMP}°C - ${TEMP_DEMAIN}°C" >> "$METEO"
 
 rm "$DATA"
 #On supprime le fichier temporaire car on en a plus besoin.
 
+
 # Exemple de ligne à ajouter dans crontab -e pour exécuter le script toutes les 4 minutes
 # */4 * * * * /chemin/vers/le/dossier/Extracteur_Météo.sh alors
 # Ici, $0 contiendra /chemin/vers/le/dossier/Extracteur_Météo.sh et dirname($0) permettra de récupérer /chemin/vers/le/dossier, correspondant à DIR_SCRIPT
+
