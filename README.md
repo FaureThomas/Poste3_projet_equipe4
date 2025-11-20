@@ -147,6 +147,29 @@ Ce qui correspond à :
 Ce format est essentiel au bon fonctionnement du script car c’est ce que permet de retrouver les données à afficher.
 La ligne IFS='|' read TEMP VENT HUMIDITE VISIBILITE <<< "$(cat "$DATA")"
 Permet de lire le fichier, de découper le texte à chaque |, et stock chaque morceau de données dans une variable (TEMPS, VENT, HUMIDITE, VISIBILITE) pour ensuite pouvoir les afficher grâce au echo ( echo "${DATE} -${VILLE} : ${TEMP} - ${TEMP_DEMAIN}°C - Vent : ${VENT} - Humidite : ${HUMIDITE} - Visibilite : ${VISIBILITE}" ).
+
+Variante 2 : Export en JSON
+Cette variante ajoute une option permettant de sauvegarder les données météo au format JSON au lieu du fichier texte classique.
+Utilisation
+./Extracteur_Météo.sh <ville> --json
+Exemple :
+./Extracteur_Météo.sh Toulouse --json
+Fonctionnement
+	Le script génère un fichier : meteo_<ville>.json
+	Le fichier est créé automatiquement et écrasé à chaque exécution (une seule entrée).
+	Le JSON contient : date, heure, ville, température actuelle, prévision de demain, vent, humidité, visibilité.
+Exemple de sortie
+{
+  "date": "2025-01-23",
+  "heure": "14:52",
+  "ville": "Toulouse",
+  "temperature": "12°C",
+  "prevision": "5",
+  "vent": "18 km/h",
+  "humidite": "67%",
+  "visibilite": "10 km"
+}
+
                                                             
 Variante 3 :
 Cette partie du script s'occupe de la gestion des erreurs en contrôlant si le recueil des données depuis wttr.in a échoué. Pour cela, elle se sert de ``$?`` pour repérer un problème de la commande précédente ainsi que le fichier indiqué par ``$DATA``, vérifié avec ``! -s "$DATA "`` afin de déterminer si le fichier est vide ou non présent. Si un problème survient, le script indique une alerte d'erreur avec des indicateurs horaires dans ``meteo_error.log``, facilitant donc l'identification précise du moment et de la raison de l'échec.
